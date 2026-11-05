@@ -1,0 +1,1 @@
+<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType></PropertyGroup><ItemGroup><ProjectReference Include="../core/Threadbook.Core.csproj" /><ProjectReference Include="../storage/Threadbook.Storage.csproj" /></ItemGroup></Project>

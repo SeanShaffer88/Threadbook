@@ -1,0 +1,3 @@
+# Pane WPF tests
+Real WPF controls with routed Thumb drag/keyboard events verify seams and changed geometry for all six layouts, persisted reload, cancellation, window shrink/grow, draft/control identity, locked and pending callbacks. Also runs the existing six-layout smoke including minimum windows and caption checks. This is routed interaction evidence, not hardware mouse automation. Entry and Dispatcher exceptions produce stderr and a failing exit code.
+Run `dotnet run --project pane-ui-tests -c Release -- <new-absolute-work-fixture>` using workspace-local CLI/AppData/cache settings (see work/panes-build.ps1). Synthetic screenshot is written within that fixture. No personal/default notes. Repository MIT license; no third-party code added.

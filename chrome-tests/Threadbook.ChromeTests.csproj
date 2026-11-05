@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net10.0-windows</TargetFramework><TargetPlatformMoniker>Windows,Version=7.0</TargetPlatformMoniker><OutputType>Exe</OutputType><UseWPF>true</UseWPF><AssemblyName>Threadbook</AssemblyName></PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../core/Threadbook.Core.csproj"/>
+    <Compile Include="../desktop/LibraryDialogs.cs" Link="LibraryDialogs.cs"/>
+    <Compile Include="../desktop/WindowFrame.cs" Link="WindowFrame.cs"/><Compile Include="../desktop/WindowChromeHelper.cs" Link="WindowChromeHelper.cs"/><Compile Include="../desktop/WindowSizing.cs" Link="WindowSizing.cs"/><Compile Include="../desktop/ApplicationBrand.cs" Link="ApplicationBrand.cs"/>
+    <Resource Include="../desktop/Assets/Threadbook.ico" Link="Assets/Threadbook.ico"/><Resource Include="../desktop/Assets/Threadbook-32.png" Link="Assets/Threadbook-32.png"/>
+  </ItemGroup>
+</Project>

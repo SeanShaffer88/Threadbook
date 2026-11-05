@@ -1,0 +1,2 @@
+# Pane preference tests
+BCL-only tests for the schema-1 private sidecar: strict parsing, byte preservation, explicit reset, host privacy guard and encrypted round trips. Run `dotnet run --project pane-sizing-tests -c Release -- <new-absolute-work-fixture>` with the repository offline NuGet configuration. No default data paths or network access. Implementation belongs to Threadbook Desktop under the repository MIT license; no third-party code added.

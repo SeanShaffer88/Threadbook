@@ -1,0 +1,2 @@
+<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework>net10.0-windows</TargetFramework><TargetPlatformMoniker>Windows,Version=7.0</TargetPlatformMoniker><OutputType>Exe</OutputType><UseWPF>true</UseWPF></PropertyGroup><ItemGroup><ProjectReference Include="../desktop/Threadbook.Desktop.csproj"/></ItemGroup></Project>
+
