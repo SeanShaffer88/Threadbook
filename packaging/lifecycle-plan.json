@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "description": "PARTIAL generation-only plan. Repeated beta.2 setup tests same-AppId repair, not an earlier-version upgrade. Before execution, review docs/packaging.md: add a synthetic guest notebook and hashes, reject unsafe target cases, and manually qualify uninstall/shortcut cleanup after these phases. No host or VM execution is authorized by generation.",
+  "phases": [
+    {
+      "name": "install",
+      "executable": "Threadbook-setup.exe",
+      "arguments": ["/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/DIR=C:\\Threadbook-App"],
+      "expectedExitCodes": [0],
+      "timeoutSeconds": 120,
+      "fileAssertions": [{"path":"C:\\Threadbook-App\\Threadbook.exe","exists":true}],
+      "processAssertions": [{"name":"Threadbook","running":false}],
+      "startupAssertions": [{"hive":"CurrentUser","name":"Threadbook","exists":false}]
+    },
+    {
+      "name": "upgrade",
+      "executable": "Threadbook-setup.exe",
+      "arguments": ["/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/DIR=C:\\Threadbook-App"],
+      "expectedExitCodes": [0],
+      "timeoutSeconds": 120,
+      "fileAssertions": [{"path":"C:\\Threadbook-App\\Threadbook.exe","exists":true,"preserveFromPhase":"install"}],
+      "processAssertions": [{"name":"Threadbook","running":false}],
+      "startupAssertions": [{"hive":"CurrentUser","name":"Threadbook","exists":false}]
+    }
+  ]
+}

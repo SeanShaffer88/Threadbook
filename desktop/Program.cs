@@ -33,7 +33,7 @@ public static class Program
             }
             if ((demo || smoke || benchmark || screenshot is not null) && dataDir is null) throw new ArgumentException("Test/demo options require an explicit --data-dir fixture folder.");
             if (smoke && File.Exists(Path.Combine(dataDir!, "threadbook.json"))) throw new ArgumentException("Smoke test requires a new fixture folder.");
-            dataDir ??= Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Threadbook");
+            dataDir = StartupStorage.Resolve(dataDir, AppContext.BaseDirectory, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Threadbook"));
             bool fresh = !File.Exists(Path.Combine(dataDir, "threadbook.json"));
             var app = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
             if (JsonStore.IsEncryptedDirectory(dataDir)) {

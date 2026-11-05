@@ -1,5 +1,17 @@
 # Verification
 
+## Beta.2 packaging verification (local, 2026-11-04)
+
+- .NET SDK 10.0.403 desktop Release build with warnings as errors: exit 0, zero warnings/errors.
+- Existing nine CI headless projects plus `startup-tests/Threadbook.StartupTests.csproj`: exit 0 for each. Startup tests link the actual desktop storage selector without WPF.
+- Startup: unchanged default selection without opening it; application-directory marker from foreign CWD; explicit priority; real synthetic JsonStore creation; invalid marker rejection; exclusive lock failure and OS-enforced read-only lock-file write denial without fallback: passed. Directory ACL qualification remains unperformed.
+- Framework-dependent win-x64 publish without PDBs: exit 0. Complete portable ZIP plus installer compiled locally: exit 0. Inno 6 access was denied by sandbox; authorized fallback Inno 7.1.1 was used. No compiler download/install occurred.
+- Exact application allowlist, ZIP entry inventory, per-file and artifact hashes, wrong payload marker rejection and dangerous/existing output rejection: passed. Actual build-script existing-output rejection: expected exit 1 before publish.
+- DevTools strict Test-Package: exit 0; native apphost Get-DllInfo: exit 0, x64 PE32+. Static inspection is separate from installer execution.
+- Extracted portable WPF `--data-dir <new-fixture> --smoke-test` from a foreign working directory: exit 0; real handler smoke-result PASS. Marker-only test mode without an explicit data path: expected exit 1, no Data created.
+- Partial Windows Sandbox install/repair lab generated: exit 0, VMExecution NotPerformed. Installer install/upgrade/uninstall, shortcut cleanup, notebook preservation in an installed lifecycle, missing-runtime clean guest behavior, hosted CI and independent artifact audit remain unperformed.
+
+Reproduce with [packaging instructions](docs/packaging.md). Private local build evidence and hashes are retained outside this repository; no private paths, actual notebooks or screenshots were added to these packages. The installer is unsigned. No existing/default notes were opened, no installer or VM was launched, and no push/tag/release/merge was performed.
 ## Reproduce the headless checks
 
 Use Windows, PowerShell 7, .NET SDK 10.0.403, and the .NET 10 Windows desktop targeting support. Local recorded execution used Microsoft.WindowsDesktop.App 10.0.14. Run the following from the repository root. It creates unique disposable state outside the checkout, uses absolute project paths, checks every native exit code, and leaves fixtures available for inspection.

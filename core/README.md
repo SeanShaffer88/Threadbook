@@ -1,6 +1,6 @@
 # Threadbook.Core
 
-Package reference example: `<PackageReference Include="Threadbook.Core" Version="0.2.0-beta.1" />`.
+Package reference example: `<PackageReference Include="Threadbook.Core" Version="0.2.0-beta.2" />`.
 
 Original MIT implementation using .NET 10 BCL only; no third-party dependencies. Dependency graph: desktop -> Storage -> Core; desktop -> Core. Core has no UI, filesystem, network, timers or import side effects.
 

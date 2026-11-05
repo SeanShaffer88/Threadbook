@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.0-beta.2] - 2026-11-04
+
+- Add a per-user installer and portable ZIP with explicit storage selection and manual .NET 10 Desktop Runtime prerequisite.
+- Keep automated modes restricted to explicit fixture directories; portable errors never fall back to the default library.
+- Add headless startup and package inventory tests. Installed lifecycle and read-only ACL qualification remain pending; see docs/packaging.md.
+
 ## 0.2.0-beta.1 — release candidate
 
 Release availability, date, source commit, and artifact checksums are recorded on the GitHub release page.
