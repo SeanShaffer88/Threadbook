@@ -44,6 +44,7 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
           $projects = @(
+            'startup-tests/Threadbook.StartupTests.csproj',
             'tests/Threadbook.Tests.csproj',
             'writing-tests/Threadbook.WritingTests.csproj',
             'layout-tests/Threadbook.LayoutTests.csproj',
@@ -58,9 +59,16 @@ jobs:
           foreach ($project in $projects) {
             $projectPath = Join-Path $env:GITHUB_WORKSPACE $project
             $arguments = @('run', '--project', $projectPath, '-c', 'Release', '--property:TreatWarningsAsErrors=true', '--property:UseSharedCompilation=false', ('--artifacts-path=' + (Join-Path $env:THREADBOOK_CI_ROOT 'artifacts')))
-            if ($project -like 'pane-sizing-tests/*' -or $project -like 'archive-storage-tests/*') {
+            if ($project -like 'startup-tests/*' -or $project -like 'pane-sizing-tests/*' -or $project -like 'archive-storage-tests/*') {
               $arguments += @('--', (Join-Path $env:THREADBOOK_CI_ROOT ('work-fixture-' + [guid]::NewGuid().ToString('N'))))
             }
             dotnet @arguments
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           }
+      - name: Build and verify portable package
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $packageRoot = Join-Path $env:THREADBOOK_CI_ROOT 'packages'
+          & (Join-Path $env:GITHUB_WORKSPACE 'tools/Build-Packages.ps1') -OutputRoot $packageRoot -SkipInstaller
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & (Join-Path $env:GITHUB_WORKSPACE 'tools/Test-Packages.ps1') -PackageRoot $packageRoot -FixtureRoot (Join-Path $env:THREADBOOK_CI_ROOT 'package-fixtures')

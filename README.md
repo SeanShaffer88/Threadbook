@@ -8,12 +8,12 @@ Your notes deserve room for a conversation. Threadbook is an offline Windows not
 
 ## Start writing
 
-1. Open [Releases](https://github.com/SeanShaffer88/Threadbook/releases) and look for `Threadbook-v0.2.0-beta.1-win-x64.zip`. Check availability and SHA-256 checksums on the corresponding release page.
+1. Open [Releases](https://github.com/SeanShaffer88/Threadbook/releases) and look for the beta.2 `Threadbook-v0.2.0-beta.2-win-x64-setup.exe` or `Threadbook-v0.2.0-beta.2-win-x64-portable.zip`. Check availability and SHA-256 checksums on the corresponding release page.
 2. Install the **.NET 10 Desktop Runtime for Windows x64** from [Microsoft](https://dotnet.microsoft.com/en-us/download/dotnet/10.0). It includes the core .NET Runtime; you do not need a separate core runtime or the SDK to run Threadbook.
-3. Extract the complete ZIP and open `Threadbook.exe`. Keep the companion files together.
+3. Run the per-user setup, or extract the complete portable ZIP into a writable folder and open `Threadbook.exe`. Keep the companion files together.
 4. Choose **+ Create notebook**, then **New note**. Write a title and Markdown body, save, and add a reply.
 
-This is beta software distributed as a framework-dependent ZIP. Keep independent backups of important notes. There is no installer or automatic updater.
+This is beta software. Both packages depend on the Desktop Runtime. Keep independent backups of important notes. There is no automatic updater. Availability and qualification limits are listed on the release page; see [packaging](docs/packaging.md).
 
 ## Write, connect, and revisit
 
@@ -52,7 +52,7 @@ Export saved notes as Markdown or passive HTML, or export the current draft sepa
 
 ## Storage and privacy
 
-Your default library is `%LOCALAPPDATA%\Threadbook`. To choose another directory, launch `Threadbook.exe --data-dir` followed by that directory's path. Only one running process can own a library directory.
+Your installed/default library is `%LOCALAPPDATA%\Threadbook`. The portable ZIP has `portable.flag` beside the executable and stores its library in adjacent `Data`, independent of the working directory. Portable storage errors fail visibly without falling back. To choose another directory, launch `Threadbook.exe --data-dir` followed by that directory's path. Only one running process can own a library directory.
 
 Ordinary libraries store **plaintext JSON**. Password protection creates a verified encrypted copy in a **new directory**. The original plaintext notes, backups, and preserved files remain unchanged on disk. Protect those copies too.
 
