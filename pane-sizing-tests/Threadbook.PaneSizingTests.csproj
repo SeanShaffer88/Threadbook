@@ -1,0 +1,1 @@
+<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType></PropertyGroup><ItemGroup><ProjectReference Include="../storage/Threadbook.Storage.csproj"/><Compile Include="../desktop/LayoutPreferences.cs" Link="LayoutPreferences.cs"/><Compile Include="../desktop/PaneSizePreferences.cs" Link="PaneSizePreferences.cs"/></ItemGroup></Project>

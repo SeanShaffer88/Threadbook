@@ -1,0 +1,1 @@
+<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><PackageReadmeFile>README.md</PackageReadmeFile></PropertyGroup><ItemGroup><None Update="README.md" Pack="true" PackagePath="/"/><None Include="../LICENSE" Pack="true" PackagePath="/"/></ItemGroup></Project>

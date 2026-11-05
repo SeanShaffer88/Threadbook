@@ -3,18 +3,64 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
-  repository:
+  windows:
     runs-on: windows-latest
+    timeout-minutes: 20
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      DOTNET_NOLOGO: '1'
+      MSBuildEnableWorkloadResolver: 'false'
+    defaults:
+      run:
+        shell: pwsh
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           persist-credentials: false
-      - name: Verify repository essentials
-        shell: pwsh
+      - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          dotnet-version: '10.0.403'
+      - name: Isolate build and test state
         run: |
-          foreach ($file in @('README.md', 'LICENSE')) {
-            if (-not (Test-Path -LiteralPath $file -PathType Leaf)) { throw "Missing $file" }
+          $ErrorActionPreference = 'Stop'
+          $root = Join-Path $env:RUNNER_TEMP ('threadbook-ci-' + [guid]::NewGuid().ToString('N'))
+          "THREADBOOK_CI_ROOT=$root" >> $env:GITHUB_ENV
+          foreach ($name in @('APPDATA', 'LOCALAPPDATA', 'DOTNET_CLI_HOME', 'NUGET_PACKAGES', 'TEMP', 'TMP')) {
+            $path = Join-Path $root $name
+            New-Item -ItemType Directory -Path $path -Force | Out-Null
+            "$name=$path" >> $env:GITHUB_ENV
+          }
+      - name: Build desktop
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Set-Location $env:THREADBOOK_CI_ROOT
+          dotnet build (Join-Path $env:GITHUB_WORKSPACE 'desktop/Threadbook.Desktop.csproj') -c Release --warnaserror ('--artifacts-path=' + (Join-Path $env:THREADBOOK_CI_ROOT 'artifacts')) -p:UseSharedCompilation=false
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Run headless console suites
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $projects = @(
+            'tests/Threadbook.Tests.csproj',
+            'writing-tests/Threadbook.WritingTests.csproj',
+            'layout-tests/Threadbook.LayoutTests.csproj',
+            'library-domain-tests/Threadbook.LibraryDomainTests.csproj',
+            'library-storage-tests/Threadbook.LibraryStorageTests.csproj',
+            'private-files-tests/Threadbook.PrivateFilesTests.csproj',
+            'archive-storage-tests/Threadbook.ArchiveStorage.Tests.csproj',
+            'pane-sizing-tests/Threadbook.PaneSizingTests.csproj',
+            'wiki-tests/Threadbook.WikiTests.csproj'
+          )
+          Set-Location $env:THREADBOOK_CI_ROOT
+          foreach ($project in $projects) {
+            $projectPath = Join-Path $env:GITHUB_WORKSPACE $project
+            $arguments = @('run', '--project', $projectPath, '-c', 'Release', '--property:TreatWarningsAsErrors=true', '--property:UseSharedCompilation=false', ('--artifacts-path=' + (Join-Path $env:THREADBOOK_CI_ROOT 'artifacts')))
+            if ($project -like 'pane-sizing-tests/*' -or $project -like 'archive-storage-tests/*') {
+              $arguments += @('--', (Join-Path $env:THREADBOOK_CI_ROOT ('work-fixture-' + [guid]::NewGuid().ToString('N'))))
+            }
+            dotnet @arguments
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           }
