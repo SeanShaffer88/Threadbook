@@ -62,8 +62,8 @@ jobs:
           $changelog = Get-Content (Join-Path $env:GITHUB_WORKSPACE 'CHANGELOG.md')
           $start = -1; $end = $changelog.Count
           for ($i = 0; $i -lt $changelog.Count; $i++) {
-            if ($changelog[$i] -like "## [$version]*") { $start = $i; continue }
-            if ($start -ge 0 -and $i -gt $start -and $changelog[$i] -like '## *') { $end = $i; break }
+            if ($changelog[$i].StartsWith("## [$version]")) { $start = $i; continue }
+            if ($start -ge 0 -and $i -gt $start -and $changelog[$i].StartsWith('## ')) { $end = $i; break }
           }
           if ($start -lt 0) { throw "No CHANGELOG section for $version." }
           $notes = Join-Path $env:THREADBOOK_RELEASE_ROOT 'release-notes.md'
