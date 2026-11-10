@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- Built-in catalog of MCP servers, skills, prompt packs and guides, opened from the sidebar or the Notebook menu. Each entry shows its source, license, compatible clients, a plain statement of what it can touch (files, commands, network, API key), and a last-verified date. Install commands and config snippets can be copied, and an entry can be saved into a notebook as a note with its facts and room for personal notes. The catalog is bundled and read-only; Threadbook downloads and installs nothing from it.
+
 ## [0.3.0-beta.1] - 2026-11-10
 
 ### Added
