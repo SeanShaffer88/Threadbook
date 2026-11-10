@@ -33,7 +33,7 @@ Use **Notebook → Manage notebooks**, **Library**, and **Templates** to organiz
 
 Track managed tasks with due times, completion, and snooze, or toggle Markdown checklists. Reminders run while Threadbook is open and pause while locked. Attach local files to saved notes; bounded PNG/JPEG previews stay local, while other files remain opaque and are never executed. Markdown tables render in Preview. Images are attachment previews rather than remote Markdown image downloads.
 
-Choose Light, Dark, or System theme and a layout:
+Choose Light, Dark, or System theme and a layout: colors follow the TesselGUI revision 2 tokens — GitHub Dark in dark mode, and the Tessel light surfaces with the GitHub Light accent family in light mode.
 
 | Layout | What you see |
 | --- | --- |

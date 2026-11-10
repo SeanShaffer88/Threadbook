@@ -31,7 +31,7 @@ internal sealed class WindowFrame : Grid
         RowDefinitions.Add(new RowDefinition { Height = new GridLength(40) });
         RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
         var surface = new CaptionSurface { BorderThickness = new Thickness(0, 0, 0, 1) };
-        BindThemeBrush(surface, Border.BackgroundProperty, "ChromeBg", "Bg", new SolidColorBrush(Color.FromRgb(14, 17, 19)));
+        BindThemeBrush(surface, Border.BackgroundProperty, "ChromeBg", "Bg", new SolidColorBrush(Color.FromRgb(13, 17, 23)));
         surface.SetResourceReference(Border.BorderBrushProperty, "ChromeLine");
         var bar = new Grid();
         bar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
@@ -84,11 +84,11 @@ internal sealed class WindowFrame : Grid
     {
         var button = new CaptionControl { Content = glyph, Width = 46, Height = 40, Padding = new Thickness(0), BorderThickness = new Thickness(0), FontSize = 17, Margin = new Thickness(0) };
         BindThemeBrush(button, Control.ForegroundProperty, "ChromeText", "Text", Brushes.WhiteSmoke);
-        BindThemeBrush(button, Control.BackgroundProperty, "ChromeBg", "Bg", new SolidColorBrush(Color.FromRgb(14, 17, 19)));
+        BindThemeBrush(button, Control.BackgroundProperty, "ChromeBg", "Bg", new SolidColorBrush(Color.FromRgb(13, 17, 23)));
                 var focusStyle = new Style(typeof(Control));
         var focusTemplate = new ControlTemplate(typeof(Control));
         var focusBorder = new FrameworkElementFactory(typeof(Border));
-        focusBorder.SetValue(Border.BorderBrushProperty, Brushes.OrangeRed); focusBorder.SetValue(Border.BorderThicknessProperty, new Thickness(2));
+        focusBorder.SetResourceReference(Border.BorderBrushProperty, "Focus"); focusBorder.SetValue(Border.BorderThicknessProperty, new Thickness(2));
         focusBorder.SetValue(Border.CornerRadiusProperty, new CornerRadius(4)); focusBorder.SetValue(MarginProperty, new Thickness(3));
         focusTemplate.VisualTree = focusBorder; focusStyle.Setters.Add(new Setter(Control.TemplateProperty, focusTemplate)); button.FocusVisualStyle = focusStyle;
         AutomationProperties.SetName(button, name); button.ToolTip = name;
@@ -133,7 +133,7 @@ internal sealed class WindowFrame : Grid
     }
     private sealed class CaptionSurface : Border
     {
-        static CaptionSurface() { BackgroundProperty.OverrideMetadata(typeof(CaptionSurface), new FrameworkPropertyMetadata(new SolidColorBrush(Color.FromRgb(14, 17, 19)))); BorderBrushProperty.OverrideMetadata(typeof(CaptionSurface), new FrameworkPropertyMetadata(new SolidColorBrush(Color.FromRgb(50, 56, 60)))); }
+        static CaptionSurface() { BackgroundProperty.OverrideMetadata(typeof(CaptionSurface), new FrameworkPropertyMetadata(new SolidColorBrush(Color.FromRgb(13, 17, 23)))); BorderBrushProperty.OverrideMetadata(typeof(CaptionSurface), new FrameworkPropertyMetadata(new SolidColorBrush(Color.FromRgb(61, 68, 77)))); }
     }
     private sealed class CaptionText : TextBlock
     {
@@ -141,6 +141,6 @@ internal sealed class WindowFrame : Grid
     }
     private sealed class CaptionControl : Button
     {
-        static CaptionControl() { ForegroundProperty.OverrideMetadata(typeof(CaptionControl), new FrameworkPropertyMetadata(Brushes.WhiteSmoke)); BackgroundProperty.OverrideMetadata(typeof(CaptionControl), new FrameworkPropertyMetadata(new SolidColorBrush(Color.FromRgb(14, 17, 19)))); }
+        static CaptionControl() { ForegroundProperty.OverrideMetadata(typeof(CaptionControl), new FrameworkPropertyMetadata(Brushes.WhiteSmoke)); BackgroundProperty.OverrideMetadata(typeof(CaptionControl), new FrameworkPropertyMetadata(new SolidColorBrush(Color.FromRgb(13, 17, 23)))); }
     }
 }

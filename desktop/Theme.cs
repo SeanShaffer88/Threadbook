@@ -18,12 +18,22 @@ internal static class Theme
         }
         var r = Application.Current.Resources;
         void Color(string name, string hex) => r[name] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(hex));
-        Color("Bg", light ? "#F5F6F7" : "#0E1113"); Color("Surface", light ? "#FFFFFF" : "#171B1E");
-        Color("Hover", light ? "#E4E8EB" : "#242B30"); Color("Text", light ? "#182128" : "#F1F3F5");
-        Color("Muted", light ? "#4B5962" : "#ADB5BD"); Color("Line", light ? "#87939A" : "#596168");
-        Color("Accent", "#FF5700"); Color("Selected", light ? "#FFE2D1" : "#442711");
+        // TesselGUI revision 2 tokens (docs/tokens.json in SeanShaffer88/TesselGUI, v1.2.x):
+        // dark is GitHub Dark; light keeps Tessel light surfaces with the GitHub Light accent family.
+        // "Accent" carries the selection-indicator role; primary actions use "Action".
+        Color("Bg", light ? "#EDEDF0" : "#0D1117"); Color("Surface", light ? "#FFFFFF" : "#0E1218");
+        Color("Hover", light ? "#E4E4E9" : "#0F1319"); Color("Raised", light ? "#E4E4E9" : "#0F1319");
+        Color("Text", light ? "#202023" : "#F0F6FC");
+        Color("Muted", light ? "#50505B" : "#9198A1"); Color("Line", light ? "#B8B8BD" : "#3D444D");
+        Color("Accent", light ? "#0969DA" : "#2F81F7"); Color("Selected", light ? "#DDDDE4" : "#1F2630");
+        Color("Focus", light ? "#0550AE" : "#79B8FF"); Color("DeepAccent", light ? "#0550AE" : "#15263C");
+        Color("AccentText", light ? "#F1F1F3" : "#F0F6FC");
+        Color("Action", "#1A7F37"); Color("ActionHover", "#238636"); Color("ActionPressed", "#116329");
+        Color("Grid", light ? "#F2F2F5" : "#1C2128");
+        Color("Info", light ? "#174E85" : "#A5D6FF"); Color("Warning", light ? "#735100" : "#D29922");
+        Color("Success", light ? "#236340" : "#3FB950"); Color("Danger", light ? "#9D2B1F" : "#FFA198");
         if (r.Contains(typeof(Button))) return;
-        // Text inherits the host foreground, including dark captions on orange buttons.
+        // Text inherits the host foreground, including white captions on green action buttons.
         r[typeof(TextBlock)] = new Style(typeof(TextBlock));
         var control = new Style(typeof(Control)); control.Setters.Add(new Setter(Control.FontFamilyProperty, new FontFamily("Segoe UI"))); control.Setters.Add(new Setter(Control.FontSizeProperty, 14.0)); control.Setters.Add(new Setter(Control.ForegroundProperty, new DynamicResourceExtension("Text"))); r[typeof(Control)] = control;
         var button = new Style(typeof(Button), control);
@@ -37,7 +47,7 @@ internal static class Theme
         border.SetValue(Border.CornerRadiusProperty, new CornerRadius(3)); border.SetValue(Border.BackgroundProperty, new TemplateBindingExtension(Control.BackgroundProperty)); border.SetValue(Border.BorderBrushProperty, new TemplateBindingExtension(Control.BorderBrushProperty)); border.SetValue(Border.BorderThicknessProperty, new TemplateBindingExtension(Control.BorderThicknessProperty));
         var content = new FrameworkElementFactory(typeof(ContentPresenter)); content.SetValue(FrameworkElement.MarginProperty, new TemplateBindingExtension(Control.PaddingProperty)); content.SetValue(FrameworkElement.HorizontalAlignmentProperty, new TemplateBindingExtension(Control.HorizontalContentAlignmentProperty)); content.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center); border.AppendChild(content); template.VisualTree = border; button.Setters.Add(new Setter(Control.TemplateProperty, template));
         var hover = new Trigger { Property = UIElement.IsMouseOverProperty, Value = true }; hover.Setters.Add(new Setter(UIElement.OpacityProperty, .82)); button.Triggers.Add(hover);
-        var focus = new Trigger { Property = UIElement.IsKeyboardFocusedProperty, Value = true }; focus.Setters.Add(new Setter(Control.BorderBrushProperty, new DynamicResourceExtension("Accent"))); focus.Setters.Add(new Setter(Control.BorderThicknessProperty, new Thickness(2))); button.Triggers.Add(focus); r[typeof(Button)] = button;
+        var focus = new Trigger { Property = UIElement.IsKeyboardFocusedProperty, Value = true }; focus.Setters.Add(new Setter(Control.BorderBrushProperty, new DynamicResourceExtension("Focus"))); focus.Setters.Add(new Setter(Control.BorderThicknessProperty, new Thickness(2))); button.Triggers.Add(focus); r[typeof(Button)] = button;
         foreach (var type in new[] { typeof(Menu), typeof(ContextMenu), typeof(MenuItem), typeof(ToolBar) }) {
             var style = new Style(type, control); style.Setters.Add(new Setter(Control.BackgroundProperty, new DynamicResourceExtension("Bg"))); r[type] = style;
         }
