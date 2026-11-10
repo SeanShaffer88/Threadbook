@@ -1,6 +1,6 @@
 # Threadbook.Storage
 
-Package reference example: `<PackageReference Include="Threadbook.Storage" Version="0.2.0-beta.2" />`.
+Package reference example: `<PackageReference Include="Threadbook.Storage" Version="0.3.0-beta.1" />`.
 
 Original MIT .NET 10 implementation. Dependency graph: desktop -> Storage -> Core; Storage uses only Core and BCL. No networking, telemetry, third-party packages or assembly-import background work. Caller serializes operations and disposes the owning JsonStore and returned streams. Independent directories support independent owners; one exclusive owner per directory.
 
