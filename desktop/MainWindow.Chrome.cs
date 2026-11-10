@@ -59,7 +59,7 @@ public sealed partial class MainWindow
         edit.Items.Add(new MenuItem { Header = "Undo", Command = ApplicationCommands.Undo, CommandTarget = replyBox }); edit.Items.Add(new MenuItem { Header = "Redo", Command = ApplicationCommands.Redo, CommandTarget = replyBox });
         var view = Group("View"); Command(view, "Command palette", OpenCommandPalette); Command(view, "History", () => OpenArchive(false)); Command(view, "Trash", () => OpenArchive(true)); Command(view, "Search", () => { search.Focus(); search.SelectAll(); }); Command(view, "Search filters", OpenLibraryFilters);
         Command(view, "Theme: Dark / Light / System", CycleTheme); Command(view, "Due / overdue", () => { if (!MayLeave()) return; overdueOnly = !overdueOnly; RefreshFeed(); });
-        var notebook = Group("Notebook"); Command(notebook, "Manage notebooks", OpenNotebookManagement); Command(notebook, "Library", OpenLibrary); Command(notebook, "Templates", OpenTemplates);
+        var notebook = Group("Notebook"); Command(notebook, "Manage notebooks", OpenNotebookManagement); Command(notebook, "Library", OpenLibrary); Command(notebook, "Templates", OpenTemplates); Command(notebook, "Catalog", OpenCatalog);
         if (!store.Files.IsEncrypted) Command(notebook, "Lock vault", () => TryLockVault());
         if (store.Files.IsEncrypted) {
             Command(notebook, "Lock vault", () => TryLockVault());

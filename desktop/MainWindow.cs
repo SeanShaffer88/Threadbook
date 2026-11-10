@@ -54,6 +54,7 @@ public sealed partial class MainWindow : Window
         nav.Children.Add(Nav("History", () => OpenArchive(false))); nav.Children.Add(Nav("Trash", () => OpenArchive(true)));
         nav.Children.Add(notebooks);
         nav.Children.Add(Rule()); nav.Children.Add(Nav("+  Create notebook", CreateNotebook));
+        nav.Children.Add(Nav("Catalog", OpenCatalog));
 
         sidebar = PanelBorder(new ScrollViewer { Content = nav, VerticalScrollBarVisibility = ScrollBarVisibility.Auto }); columns.Children.Add(sidebar);
         var middle = new DockPanel { Margin = new Thickness(16, 18, 16, 0) };
@@ -263,6 +264,22 @@ public sealed partial class MainWindow : Window
         if (editor.ShowDialog() == true) { ClearReply(); selectedId = editor.EffectiveNoteId; notebookId = app.State.Notes.Single(n => n.Id == selectedId).NotebookId; savedOnly = false; SetSearch(""); showDetail = true; Refresh(); Responsive(); }
     }
     internal void RequestNewNote() => NewNote();
+    private void OpenCatalog()
+    {
+        if (!ArchiveReady()) return;
+        if (!MayLeave()) return;
+        var dialog = new CatalogDialog(this, AddCatalogNote);
+        dialog.ShowDialog();
+        if (dialog.AddedAny) Refresh();
+    }
+    private bool AddCatalogNote(string title, string body)
+    {
+        if (app.State.Notebooks.Count == 0) { SetStatus("Create a notebook first.", true); return false; }
+        var target = notebookId ?? app.State.Notebooks[0].Id;
+        if (!Run(new PutNote(null, target, title, body, "catalog"))) return false;
+        notebookId = target;
+        return true;
+    }
     private void EditNote(Note note)
     {
         if (!ArchiveReady()) return;

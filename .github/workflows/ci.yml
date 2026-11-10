@@ -54,7 +54,8 @@ jobs:
             'archive-storage-tests/Threadbook.ArchiveStorage.Tests.csproj',
             'pane-sizing-tests/Threadbook.PaneSizingTests.csproj',
             'wiki-tests/Threadbook.WikiTests.csproj',
-            'prompt-tests/Threadbook.PromptTests.csproj'
+            'prompt-tests/Threadbook.PromptTests.csproj',
+            'catalog-tests/Threadbook.CatalogTests.csproj'
           )
           Set-Location $env:THREADBOOK_CI_ROOT
           foreach ($project in $projects) {
