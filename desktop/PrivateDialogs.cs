@@ -16,11 +16,11 @@ internal static class PrivateDialogs
     internal static bool Password<T>(Window? owner, string title, bool confirm, PasswordAction<T> action, out T result)
     {
         T value = default!; bool accepted = false;
-        var window = new Window { Title = title, Width = 450, Height = confirm ? 350 : 280, WindowStartupLocation = owner is null ? WindowStartupLocation.CenterScreen : WindowStartupLocation.CenterOwner, ResizeMode = ResizeMode.NoResize, Background = new SolidColorBrush(Color.FromRgb(14, 17, 19)), Foreground = Brushes.WhiteSmoke };
+        var window = new Window { Title = title, Width = 450, Height = confirm ? 350 : 280, WindowStartupLocation = owner is null ? WindowStartupLocation.CenterScreen : WindowStartupLocation.CenterOwner, ResizeMode = ResizeMode.NoResize, Background = new SolidColorBrush(Color.FromRgb(13, 17, 23)), Foreground = Brushes.WhiteSmoke };
         ApplicationBrand.Apply(window);
         if (owner is not null) window.Owner = owner;
         var panel = new StackPanel { Margin = new Thickness(24) }; window.Content = panel;
-        WindowFrame.BindThemeBrush(window, Window.BackgroundProperty, "Bg", "Bg", new SolidColorBrush(Color.FromRgb(14, 17, 19)));
+        WindowFrame.BindThemeBrush(window, Window.BackgroundProperty, "Bg", "Bg", new SolidColorBrush(Color.FromRgb(13, 17, 23)));
         WindowFrame.BindThemeBrush(window, Window.ForegroundProperty, "Text", "Text", Brushes.WhiteSmoke);
         WindowChromeHelper.Attach(window);
         panel.Children.Add(new TextBlock { Text = confirm ? "Choose a password (at least 12 characters). Keep it safe: there is no password recovery." : "Enter the vault password. Wrong passwords never open plaintext data.", TextWrapping = TextWrapping.Wrap });
@@ -28,7 +28,7 @@ internal static class PrivateDialogs
         System.Windows.Automation.AutomationProperties.SetName(password, "Vault password"); panel.Children.Add(password);
         var repeat = new PasswordBox { MaxLength = 1024, Margin = new Thickness(0, 0, 0, 8) };
         System.Windows.Automation.AutomationProperties.SetName(repeat, "Confirm vault password"); if (confirm) panel.Children.Add(repeat);
-        var error = new TextBlock { TextWrapping = TextWrapping.Wrap, Foreground = Brushes.OrangeRed }; panel.Children.Add(error);
+        var error = new TextBlock { TextWrapping = TextWrapping.Wrap }; error.SetResourceReference(TextBlock.ForegroundProperty, "Danger"); panel.Children.Add(error);
         var submit = new Button { Content = confirm ? "Create encrypted copy" : "Unlock", MinHeight = 34, Margin = new Thickness(0, 8, 0, 0), IsDefault = true }; panel.Children.Add(submit);
         submit.Click += (_, _) => {
             char[]? chars = null, other = null;

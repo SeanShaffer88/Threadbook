@@ -109,7 +109,7 @@ public sealed partial class MainWindow : Window
     private static Button Btn(string text, Action click, bool primary = false)
     {
         var b = new Button { Content = text, MinHeight = 34 }; AutomationProperties.SetName(b, text); b.Click += (_, _) => click();
-        if (primary) { b.SetResourceReference(Control.BackgroundProperty, "Accent"); b.Foreground = Brushes.Black; b.FontWeight = FontWeights.SemiBold; b.BorderThickness = new Thickness(0); }
+        if (primary) { b.SetResourceReference(Control.BackgroundProperty, "Action"); b.Foreground = Brushes.White; b.FontWeight = FontWeights.SemiBold; b.BorderThickness = new Thickness(0); }
         return b;
     }
     private static Button Nav(string text, Action click)
@@ -169,8 +169,10 @@ public sealed partial class MainWindow : Window
     }
     private static Border Flair(string value)
     {
-        var b = new Border { CornerRadius = new CornerRadius(12), Padding = new Thickness(10, 2, 10, 2), HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 4, 0, 4), Background = new SolidColorBrush(Color.FromRgb(255, 87, 0)) };
-        b.Child = new TextBlock { Text = value, Foreground = Brushes.Black, FontWeight = FontWeights.SemiBold, FontSize = 12 }; return b;
+        var b = new Border { CornerRadius = new CornerRadius(12), Padding = new Thickness(10, 2, 10, 2), HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 4, 0, 4) };
+        b.SetResourceReference(Border.BackgroundProperty, "DeepAccent");
+        var caption = new TextBlock { Text = value, FontWeight = FontWeights.SemiBold, FontSize = 12 }; caption.SetResourceReference(TextBlock.ForegroundProperty, "AccentText");
+        b.Child = caption; return b;
     }
     private void SelectNote(Guid id)
     {
