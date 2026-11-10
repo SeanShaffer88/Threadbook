@@ -1,12 +1,15 @@
 $script:AppFiles = @(Get-Content -LiteralPath "$PSScriptRoot/../packaging/payload-manifest.json" -Raw | ConvertFrom-Json).files
+$script:PackageVersion = ([xml](Get-Content -LiteralPath "$PSScriptRoot/../Directory.Build.props" -Raw)).Project.PropertyGroup.Version
+$script:PortableName = "Threadbook-v$script:PackageVersion-win-x64-portable.zip"
+$script:SetupName = "Threadbook-v$script:PackageVersion-win-x64-setup.exe"
 function Assert-ArtifactChecksums([string]$Path) {
-    $expected = @('Threadbook-v0.2.0-beta.2-win-x64-portable.zip')
-    $setup = 'Threadbook-v0.2.0-beta.2-win-x64-setup.exe'
+    $expected = @($script:PortableName)
+    $setup = $script:SetupName
     if (Test-Path -LiteralPath (Join-Path $Path $setup) -PathType Leaf) { $expected += $setup }
     $seen = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
     $lines = @(Get-Content -LiteralPath (Join-Path $Path 'SHA256SUMS.txt'))
     foreach ($line in $lines) {
-        if ($line -notmatch '^([a-f0-9]{64})  (Threadbook-v0\.2\.0-beta\.2-win-x64-(?:portable\.zip|setup\.exe))$') { throw 'Invalid checksum entry.' }
+        if ($line -notmatch ('^([a-f0-9]{64})  (Threadbook-v' + [regex]::Escape($script:PackageVersion) + '-win-x64-(?:portable\.zip|setup\.exe))$')) { throw 'Invalid checksum entry.' }
         $hash = $Matches[1]; $name = $Matches[2]
         if ($name -cnotin $expected -or -not $seen.Add($name)) { throw 'Unexpected or duplicate checksum entry.' }
         if ((Get-FileHash -LiteralPath (Join-Path $Path $name)).Hash -ine $hash) { throw 'Artifact hash mismatch.' }

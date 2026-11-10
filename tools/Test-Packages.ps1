@@ -13,7 +13,7 @@ foreach ($file in $manifest.files) {
 }
 New-Item -ItemType Directory -Path $FixtureRoot | Out-Null
 $extracted = Join-Path $FixtureRoot 'extracted'
-$zip = Join-Path $PackageRoot 'Threadbook-v0.2.0-beta.2-win-x64-portable.zip'
+$zip = Join-Path $PackageRoot $script:PortableName
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $expected = @($script:AppFiles) + @('portable.flag','README-portable.txt','LICENSE')
 $archive = [IO.Compression.ZipFile]::OpenRead($zip)
@@ -32,8 +32,8 @@ Assert-ArtifactChecksums $PackageRoot
 # Actual isolated files exercise missing, duplicate, empty, stale and corrupt inventories.
 $checksumFixture = Join-Path $FixtureRoot 'checksum-negative'
 New-Item -ItemType Directory -Path $checksumFixture | Out-Null
-$portableName = 'Threadbook-v0.2.0-beta.2-win-x64-portable.zip'
-$setupName = 'Threadbook-v0.2.0-beta.2-win-x64-setup.exe'
+$portableName = $script:PortableName
+$setupName = $script:SetupName
 Set-Content -LiteralPath (Join-Path $checksumFixture $portableName) -Value 'synthetic portable'
 Set-Content -LiteralPath (Join-Path $checksumFixture $setupName) -Value 'synthetic setup'
 $portableLine = "$((Get-FileHash (Join-Path $checksumFixture $portableName)).Hash.ToLowerInvariant())  $portableName"
