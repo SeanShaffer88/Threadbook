@@ -46,7 +46,8 @@ try {
     'private-files-tests/Threadbook.PrivateFilesTests.csproj',
     'archive-storage-tests/Threadbook.ArchiveStorage.Tests.csproj',
     'pane-sizing-tests/Threadbook.PaneSizingTests.csproj',
-    'wiki-tests/Threadbook.WikiTests.csproj'
+    'wiki-tests/Threadbook.WikiTests.csproj',
+    'prompt-tests/Threadbook.PromptTests.csproj'
   )
   foreach ($project in $projects) {
     $arguments = @('run','--project',(Join-Path $repo $project),'-c','Release','--property:TreatWarningsAsErrors=true','--property:UseSharedCompilation=false',('--artifacts-path=' + (Join-Path $state 'artifacts')))
