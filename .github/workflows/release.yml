@@ -1,0 +1,76 @@
+name: Release
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: write
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      DOTNET_NOLOGO: '1'
+      MSBuildEnableWorkloadResolver: 'false'
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          dotnet-version: '10.0.403'
+      - name: Isolate build state and derive version
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $root = Join-Path $env:RUNNER_TEMP ('threadbook-release-' + [guid]::NewGuid().ToString('N'))
+          New-Item -ItemType Directory -Path $root | Out-Null
+          "THREADBOOK_RELEASE_ROOT=$root" >> $env:GITHUB_ENV
+          foreach ($name in @('APPDATA', 'LOCALAPPDATA', 'DOTNET_CLI_HOME', 'NUGET_PACKAGES', 'TEMP', 'TMP')) {
+            $path = Join-Path $root $name
+            New-Item -ItemType Directory -Path $path -Force | Out-Null
+            "$name=$path" >> $env:GITHUB_ENV
+          }
+          $version = $env:GITHUB_REF_NAME -replace '^v', ''
+          "THREADBOOK_VERSION=$version" >> $env:GITHUB_ENV
+          $props = Get-Content (Join-Path $env:GITHUB_WORKSPACE 'Directory.Build.props') -Raw
+          if ($props -notmatch [regex]::Escape("<Version>$version</Version>")) { throw "Tag version $version does not match Directory.Build.props." }
+      - name: Build installer and portable packages
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $candidates = @(
+            (Join-Path ${env:ProgramFiles(x86)} 'Inno Setup 6\ISCC.exe'),
+            (Join-Path $env:ProgramFiles 'Inno Setup 6\ISCC.exe'),
+            (Join-Path ${env:ProgramFiles(x86)} 'Inno Setup 7\ISCC.exe'),
+            (Join-Path $env:ProgramFiles 'Inno Setup 7\ISCC.exe')
+          )
+          $iscc = $candidates | Where-Object { Test-Path -LiteralPath $_ -PathType Leaf } | Select-Object -First 1
+          if (-not $iscc) { throw 'No installed Inno Setup compiler found on the runner.' }
+          $packages = Join-Path $env:THREADBOOK_RELEASE_ROOT 'packages'
+          & (Join-Path $env:GITHUB_WORKSPACE 'tools/Build-Packages.ps1') -Version $env:THREADBOOK_VERSION -IsccPath $iscc -OutputRoot $packages
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & (Join-Path $env:GITHUB_WORKSPACE 'tools/Test-Packages.ps1') -PackageRoot $packages -FixtureRoot (Join-Path $env:THREADBOOK_RELEASE_ROOT 'package-fixtures') -RunSmoke
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Publish the GitHub release
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $packages = Join-Path $env:THREADBOOK_RELEASE_ROOT 'packages'
+          $version = $env:THREADBOOK_VERSION
+          $changelog = Get-Content (Join-Path $env:GITHUB_WORKSPACE 'CHANGELOG.md')
+          $start = -1; $end = $changelog.Count
+          for ($i = 0; $i -lt $changelog.Count; $i++) {
+            if ($changelog[$i] -like "## [$version]*") { $start = $i; continue }
+            if ($start -ge 0 -and $i -gt $start -and $changelog[$i] -like '## *') { $end = $i; break }
+          }
+          if ($start -lt 0) { throw "No CHANGELOG section for $version." }
+          $notes = Join-Path $env:THREADBOOK_RELEASE_ROOT 'release-notes.md'
+          ($changelog[$start..($end - 1)] -join "`n") | Set-Content $notes
+          $setup = Join-Path $packages "Threadbook-v$version-win-x64-setup.exe"
+          $portable = Join-Path $packages "Threadbook-v$version-win-x64-portable.zip"
+          $sums = Join-Path $packages 'SHA256SUMS.txt'
+          foreach ($asset in @($setup, $portable, $sums)) { if (-not (Test-Path -LiteralPath $asset -PathType Leaf)) { throw "Missing release asset: $asset" } }
+          gh release create $env:GITHUB_REF_NAME $setup $portable $sums --title "Threadbook v$version" --notes-file $notes --prerelease
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
