@@ -1,6 +1,6 @@
 param(
     [Parameter(Mandatory)][string]$OutputRoot,
-    [string]$Version = '0.2.0-beta.2',
+    [string]$Version = '0.3.0-beta.1',
     [string]$IsccPath,
     [string]$BuildRunnerPath,
     [switch]$SkipInstaller
@@ -8,7 +8,7 @@ param(
 $ErrorActionPreference = 'Stop'
 . "$PSScriptRoot/PackagePolicy.ps1"
 $repo = Split-Path $PSScriptRoot
-if ($Version -cne '0.2.0-beta.2') { throw 'Version must match the committed beta.2 payload.' }
+if ($Version -cne '0.3.0-beta.1') { throw 'Version must match the committed 0.3.0-beta.1 payload.' }
 Assert-NewPackageDirectory $OutputRoot $repo
 if (-not $SkipInstaller -and (-not $IsccPath -or -not (Test-Path -LiteralPath $IsccPath -PathType Leaf))) { throw 'Supply an installed ISCC executable, or explicitly use -SkipInstaller.' }
 New-Item -ItemType Directory -Path $OutputRoot | Out-Null
