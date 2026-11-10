@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- Prompt variables: write `{{name}}` or `{{name = default}}` in any note body. **Run prompt…** in the writer opens a fill-in sheet with one field per variable, a live final-prompt preview, and a Copy button that stays off until every variable has a value or a default. `\{{name}}` stays literal text.
+- Slash menu in the writer: type `/` at the start of a word and pick a prompt part — Role, Task, Context, Input, Steps, Examples, Constraints, Output format, Tone, Variable, or Ask first — with the arrow keys and Enter, or a double-click. Inserted parts land on their first variable so it can be typed over at once.
+
 ## [0.2.0-beta.2] - 2026-11-04
 
 - Add a per-user installer and portable ZIP with explicit storage selection and manual .NET 10 Desktop Runtime prerequisite.

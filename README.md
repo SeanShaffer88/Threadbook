@@ -18,6 +18,8 @@ This is beta software. Both packages depend on the Desktop Runtime. Keep indepen
 ## Write, connect, and revisit
 
 - **Edit where you read.** Select a note and use its pencil action to edit inline. The writer includes formatting, Source/Preview, outline, find/replace, tables, undo/redo, and explicit Save. The note menu also offers **Open advanced editor…** for the separate writer.
+
+- **Use a note as a prompt.** Write fill-in blanks as `{{name}}` or `{{name = default}}`, then choose **Run prompt…** in the writer to fill each blank in a sheet with a live preview and copy the finished prompt — nothing is saved or sent. Type `/` at the start of a word in the writer to insert prompt parts (Role, Task, Context, Steps, Constraints, Output format, and more) from the slash menu. Prefix a blank with a backslash (`\{{name}}`) to keep it as literal text.
 - **Find your next action.** Press **Ctrl+Shift+P** in the main window, or choose **View → Command palette**. Search available commands, notes, and notebooks, then select an entry. Locked or unavailable actions stay guarded.
 - **Make the panes fit.** Drag a visible vertical grip, or focus it and press Left/Right to resize in small keyboard steps of 16 logical pixels. Escape cancels a drag. Widths persist separately for each layout and adapt to the available space; compact navigation hides grips.
 - **Recover earlier work.** Open **History** or **Trash** from the left navigation or View menu. Select a note before opening History. Preview an entry before restoring it. Version restore keeps current replies and library metadata and first archives the current note. Trash restores complete deleted notes or notebook cascades, including replies, tags, tasks, and attachment files.
