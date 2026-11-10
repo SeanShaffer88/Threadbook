@@ -72,5 +72,15 @@ jobs:
           $portable = Join-Path $packages "Threadbook-v$version-win-x64-portable.zip"
           $sums = Join-Path $packages 'SHA256SUMS.txt'
           foreach ($asset in @($setup, $portable, $sums)) { if (-not (Test-Path -LiteralPath $asset -PathType Leaf)) { throw "Missing release asset: $asset" } }
-          gh release create $env:GITHUB_REF_NAME $setup $portable $sums --title "Threadbook v$version" --notes-file $notes --prerelease
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          # The tag is created from the GitHub releases page, which also creates an
+          # empty release for it; complete that release when it already exists.
+          gh release view $env:GITHUB_REF_NAME *> $null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $env:GITHUB_REF_NAME $setup $portable $sums --clobber
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+            gh release edit $env:GITHUB_REF_NAME --title "Threadbook v$version" --notes-file $notes --prerelease
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          } else {
+            gh release create $env:GITHUB_REF_NAME $setup $portable $sums --title "Threadbook v$version" --notes-file $notes --prerelease
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
