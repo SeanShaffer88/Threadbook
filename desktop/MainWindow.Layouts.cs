@@ -154,7 +154,9 @@ public sealed partial class MainWindow
                 move.Click += (_, _) => { menu.PlacementTarget = move; menu.IsOpen = true; }; item.Children.Add(move); cards.Children.Add(item);
             }
             if (laneNotes.Length > feedLimit) cards.Children.Add(Btn($"Load more · {laneNotes.Length - feedLimit} remaining", () => { feedLimit += 75; RefreshProjection(); }));
-            panel.Children.Add(new ScrollViewer { Content = cards, VerticalScrollBarVisibility = ScrollBarVisibility.Auto }); Grid.SetColumn(panel, (int)lane); board.Children.Add(panel);
+            panel.Children.Add(new ScrollViewer { Content = cards, VerticalScrollBarVisibility = ScrollBarVisibility.Auto });
+            var laneBorder = new Border { Child = panel, BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(3), Padding = new Thickness(6), Margin = new Thickness(3) }; laneBorder.SetResourceReference(Border.BorderBrushProperty, "Line");
+            Grid.SetColumn(laneBorder, (int)lane); board.Children.Add(laneBorder);
         }
         projection.Children.Add(board);
     }
