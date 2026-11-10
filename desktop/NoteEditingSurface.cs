@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using Threadbook.Core;
 namespace Threadbook.Desktop;
@@ -21,6 +22,10 @@ internal sealed class NoteEditingSurface : UserControl, IDisposable
     public event EventHandler? FieldsChanged, SaveRequested, CancelRequested, NewRequested, ExportRequested, InsertNoteLinkRequested;
     internal Func<(Action<WikiLinkToken> Activate, Func<WikiLinkToken, string?> State)>? WikiPreviewContext;
     private long previewGeneration;
+    private readonly ListBox slashList = new() { MinWidth = 300, MaxHeight = 220, DisplayMemberPath = "Title" };
+    private readonly Popup slashPopup = new() { StaysOpen = true, AllowsTransparency = true };
+    private SlashQuery? slashQuery;
+    private bool slashApplying;
 
     public NoteEditingSurface(IReadOnlyList<Notebook> books, NoteEditFields initial)
     {
@@ -39,10 +44,16 @@ internal sealed class NoteEditingSurface : UserControl, IDisposable
         Tool("List", () => Wrap("- ", "")); Tool("Task", () => Wrap("- [ ] ", "")); Tool("Quote", () => Wrap("> ", ""));
         Tool("Fence", () => Wrap("```\n", "\n```")); Tool("Rule", () => Wrap("\n---\n", "")); Tool("Table", () => Wrap("\n| Heading | Heading |\n| --- | --- |\n| ", " | Cell |\n"));
         Tool("Insert note link", () => InsertNoteLinkRequested?.Invoke(this, EventArgs.Empty));
+        Tool("Run prompt…", OpenPromptRun);
         Tool("Source", ShowSourceAndFocus);
         Tool("Preview", ShowPreview); Tool("Find / Replace", () => { findPanel.Visibility = Visibility.Visible; find.Focus(); });
         Tool("Export draft…", () => ExportRequested?.Invoke(this, EventArgs.Empty)); panel.Children.Add(toolbar);
         body = Input("Note · Markdown source", initial.Body, 100000, true); body.Height = 285; body.AcceptsTab = true;
+        AutomationProperties.SetName(slashList, "Prompt blocks — type / to insert a prompt part");
+        slashPopup.Child = slashList;
+        body.PreviewKeyDown += SlashKeyDown;
+        body.LostKeyboardFocus += (_, _) => CloseSlash();
+        slashList.MouseDoubleClick += (_, e) => { if (slashList.SelectedItem is PromptBlock picked) { ApplySlash(picked); e.Handled = true; } };
         preview.Height = 285; preview.Visibility = Visibility.Collapsed; panel.Children.Add(preview);
         find.MaxLength = 100000; replacement.MaxLength = 100000;
         AutomationProperties.SetName(find, "Find literal text"); AutomationProperties.SetName(replacement, "Replace with");
@@ -59,7 +70,7 @@ internal sealed class NoteEditingSurface : UserControl, IDisposable
         find.TextChanged += (_, _) => UpdateMatches(); matchCase.Checked += (_, _) => UpdateMatches(); matchCase.Unchecked += (_, _) => UpdateMatches();
         UpdateWriting();
     }
-    private void Changed(object sender, TextChangedEventArgs e) { if (!disposed) { UpdateWriting(); FieldsChanged?.Invoke(this, EventArgs.Empty); } }
+    private void Changed(object sender, TextChangedEventArgs e) { if (!disposed) { UpdateWriting(); FieldsChanged?.Invoke(this, EventArgs.Empty); if (ReferenceEquals(sender, body)) UpdateSlash(); } }
     private void NotebookChanged(object sender, SelectionChangedEventArgs e) { if (!disposed) FieldsChanged?.Invoke(this, EventArgs.Empty); }
     private TextBox Input(string label, string value, int maxLength, bool multiline = false)
     {
@@ -68,7 +79,7 @@ internal sealed class NoteEditingSurface : UserControl, IDisposable
     }
     public void FocusSource() => ShowSourceAndFocus();
     public void SetInteractionEnabled(bool enabled) => IsEnabled = enabled;
-    public void Dispose() { if (disposed) return; disposed = true; title.TextChanged -= Changed; flair.TextChanged -= Changed; body.TextChanged -= Changed; notebook.SelectionChanged -= NotebookChanged; FieldsChanged = SaveRequested = CancelRequested = NewRequested = ExportRequested = InsertNoteLinkRequested = null; previewGeneration++; WikiPreviewContext = null; }
+    public void Dispose() { if (disposed) return; disposed = true; CloseSlash(); title.TextChanged -= Changed; flair.TextChanged -= Changed; body.TextChanged -= Changed; notebook.SelectionChanged -= NotebookChanged; FieldsChanged = SaveRequested = CancelRequested = NewRequested = ExportRequested = InsertNoteLinkRequested = null; previewGeneration++; WikiPreviewContext = null; }
     internal bool HandleShortcut(Key key, ModifierKeys modifiers)
     {
         if (disposed || !IsEnabled) return false;
@@ -99,6 +110,63 @@ internal sealed class NoteEditingSurface : UserControl, IDisposable
         body.BeginChange(); try { body.Select(start, length); body.SelectedText = text; body.Select(start + text.Length, 0); } finally { body.EndChange(); }
         return true;
     }
+    private void OpenPromptRun()
+    {
+        var owner = Window.GetWindow(this);
+        if (owner is null) { Error.Text = "Run prompt needs its window. Try the advanced editor."; return; }
+        try { new PromptRunDialog(owner, title.Text, body.Text).ShowDialog(); }
+        catch (DataException ex) { Error.Text = ex.Message; }
+    }
+    private void UpdateSlash()
+    {
+        if (slashApplying || disposed || !IsEnabled || preview.Visibility == Visibility.Visible || !body.IsKeyboardFocused) { CloseSlash(); return; }
+        var query = PromptTemplates.DetectSlash(body.Text, body.CaretIndex);
+        if (query is null) { CloseSlash(); return; }
+        var blocks = PromptTemplates.FindBlocks(query.Query);
+        if (blocks.Count == 0) { CloseSlash(); return; }
+        slashQuery = query;
+        slashList.ItemsSource = blocks; slashList.SelectedIndex = 0;
+        Rect caret;
+        try { caret = body.GetRectFromCharacterIndex(query.Start); } catch (ArgumentOutOfRangeException) { CloseSlash(); return; }
+        if (caret.IsEmpty) { CloseSlash(); return; }
+        slashPopup.PlacementTarget = body; slashPopup.Placement = PlacementMode.RelativePoint;
+        slashPopup.HorizontalOffset = caret.Left; slashPopup.VerticalOffset = caret.Bottom + 2;
+        slashPopup.IsOpen = true;
+    }
+    private void CloseSlash() { slashPopup.IsOpen = false; slashQuery = null; }
+    private void SlashKeyDown(object sender, KeyEventArgs e)
+    {
+        if (!slashPopup.IsOpen) return;
+        switch (e.Key)
+        {
+            case Key.Down: slashList.SelectedIndex = Math.Min(slashList.SelectedIndex + 1, slashList.Items.Count - 1); e.Handled = true; break;
+            case Key.Up: slashList.SelectedIndex = Math.Max(slashList.SelectedIndex - 1, 0); e.Handled = true; break;
+            case Key.Enter or Key.Tab: if (slashList.SelectedItem is PromptBlock block) ApplySlash(block); e.Handled = true; break;
+            case Key.Escape: CloseSlash(); e.Handled = true; break;
+        }
+    }
+    private void ApplySlash(PromptBlock block)
+    {
+        var query = slashQuery; CloseSlash();
+        if (query is null || disposed || !IsEnabled) return;
+        TextEdit edit;
+        try { edit = PromptTemplates.ApplyBlock(body.Text, query, block); }
+        catch (DataException ex) { Error.Text = ex.Message; return; }
+        slashApplying = true;
+        body.BeginChange();
+        try { body.SelectAll(); body.SelectedText = edit.Text; body.Select(edit.SelectionStart, edit.SelectionLength); }
+        finally { body.EndChange(); slashApplying = false; }
+        // Land on the first variable's name so it can be typed over at once.
+        int open = edit.Text.IndexOf("{{", query.Start, StringComparison.Ordinal);
+        if (open >= 0 && open < edit.SelectionStart)
+        {
+            int close = edit.Text.IndexOf("}}", open + 2, StringComparison.Ordinal);
+            int equals = edit.Text.IndexOf('=', open + 2);
+            int nameEnd = equals >= 0 && (close < 0 || equals < close) ? equals : close;
+            if (nameEnd > open + 2) body.Select(open + 2, nameEnd - open - 2);
+        }
+        body.Focus();
+    }
     private void UpdateWriting()
     {
         var parsed = Markdown.Parse(body.Text); counts.Text = $"{parsed.SourceWordCount:N0} source word count · {body.Text.Length:N0} / 100,000 characters";
@@ -117,7 +185,7 @@ internal sealed class NoteEditingSurface : UserControl, IDisposable
             } : null,
             wikiState: context is { } states ? token => generation == previewGeneration ? states.State(token) : null : null);
     }
-    private void ShowPreview() { preview.Document = RenderPreview(); body.Visibility = Visibility.Collapsed; preview.Visibility = Visibility.Visible; }
+    private void ShowPreview() { CloseSlash(); preview.Document = RenderPreview(); body.Visibility = Visibility.Collapsed; preview.Visibility = Visibility.Visible; }
     private void UpdateMatches() { if(body is null) return; var list = TextEditing.Find(body.Text, find.Text, matchCase.IsChecked == true); int current = list.ToList().FindIndex(x => x.Start == body.SelectionStart && x.Length == body.SelectionLength); matches.Text = $"{(current < 0 ? 0 : current+1)} / {list.Count} matches · literal search"; }
     private void Navigate(bool previous) { var match = TextEditing.Navigate(body.Text, find.Text, previous ? body.SelectionStart-1 : body.SelectionStart+body.SelectionLength, previous, matchCase.IsChecked == true); if(match is not null) { ShowSourceAndFocus(); body.Select(match.Start, match.Length); body.ScrollToLine(body.GetLineIndexFromCharacterIndex(match.Start)); } UpdateMatches(); }
     private void Replace(bool all)
