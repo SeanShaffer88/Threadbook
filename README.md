@@ -8,7 +8,7 @@ Your notes deserve room for a conversation. Threadbook is an offline Windows not
 
 ## Start writing
 
-1. Open [Releases](https://github.com/SeanShaffer88/Threadbook/releases) and look for the beta.1 `Threadbook-v0.3.0-beta.1-win-x64-setup.exe` or `Threadbook-v0.3.0-beta.1-win-x64-portable.zip`. Check availability and SHA-256 checksums on the corresponding release page.
+1. Open [Releases](https://github.com/SeanShaffer88/Threadbook/releases) and look for the beta.1 `Threadbook-v0.4.0-beta.1-win-x64-setup.exe` or `Threadbook-v0.4.0-beta.1-win-x64-portable.zip`. Check availability and SHA-256 checksums on the corresponding release page.
 2. Install the **.NET 10 Desktop Runtime for Windows x64** from [Microsoft](https://dotnet.microsoft.com/en-us/download/dotnet/10.0). It includes the core .NET Runtime; you do not need a separate core runtime or the SDK to run Threadbook.
 3. Run the per-user setup, or extract the complete portable ZIP into a writable folder and open `Threadbook.exe`. Keep the companion files together.
 4. Choose **+ Create notebook**, then **New note**. Write a title and Markdown body, save, and add a reply.
