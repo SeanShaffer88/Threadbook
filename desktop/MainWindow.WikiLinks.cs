@@ -140,7 +140,10 @@ public sealed partial class MainWindow
         CloseWikiChooser();
         var window = wikiChooser = new Window { Owner = owner, Title = title, Width = 620, Height = 500, WindowStartupLocation = WindowStartupLocation.CenterOwner };
         ApplicationBrand.Apply(window); window.SetResourceReference(BackgroundProperty, "Bg"); window.SetResourceReference(ForegroundProperty, "Text");
-        var panel = new DockPanel { Margin = new Thickness(18) }; window.Content = panel;
+        var panel = new DockPanel { Margin = new Thickness(18) };
+        var outline = new Border { BorderThickness = new Thickness(1), Child = panel };
+        outline.SetResourceReference(Border.BorderBrushProperty, "Line");
+        window.Content = outline;
         var query = wikiChooserQuery = new TextBox { MaxLength = 200, MinHeight = 36 };
         AutomationProperties.SetName(query, "Search live note titles and notebooks"); DockPanel.SetDock(query, Dock.Top); panel.Children.Add(query);
         var controls = new WrapPanel { Margin = new Thickness(0, 10, 0, 0) }; DockPanel.SetDock(controls, Dock.Bottom); panel.Children.Add(controls);

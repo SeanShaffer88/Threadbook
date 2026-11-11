@@ -42,6 +42,10 @@ static class Program
             var reply=(TextBox)Field(main,"replyBox")!; var search=(TextBox)Field(main,"search")!;
             var commands=(Dictionary<string,Action>)Field(main,"uiCommands")!;
             Check(commands.ContainsKey("Catalog"),"catalog command registered with a stable ID");
+            var frame=(System.Windows.Controls.Grid)Field(main,"frame")!;
+            bool bordered=false;
+            foreach(var child in frame.Children) if(child is System.Windows.Controls.Border outline && outline.BorderThickness==new Thickness(1)) bordered=true;
+            Check(bordered,"main window frame carries a visible border");
             service.Execute(new ToggleSaved(target));
             var library=(LibraryService)Field(main,"library")!;
             library.Execute(new PutLibraryTag(null,"selection"));var tag=library.State.Tags.Last().Id;

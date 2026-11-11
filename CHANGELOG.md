@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Every window now carries a visible border: the shared window frame draws a 1-pixel edge in the theme's line colour, and the command palette, wiki-link chooser and attachments windows — which use plain window frames — wrap their content in the same edge, so no window blends into a dark background.
+
 ## [0.4.0-beta.1] - 2026-11-11
 
 ### Added

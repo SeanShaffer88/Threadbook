@@ -34,7 +34,10 @@ internal sealed class CommandPalette : Window
         var title = new TextBlock { Text = "Commands & quick jump     Ctrl+Shift+P", FontSize = 17, FontWeight = FontWeights.SemiBold };
         title.SetResourceReference(TextBlock.ForegroundProperty, "Accent"); DockPanel.SetDock(title, Dock.Top); panel.Children.Add(title);
         AutomationProperties.SetName(query, "Search commands, notebooks and notes"); DockPanel.SetDock(query, Dock.Top); panel.Children.Add(query);
-        DockPanel.SetDock(reason, Dock.Bottom); panel.Children.Add(reason); panel.Children.Add(results); Content = panel;
+        DockPanel.SetDock(reason, Dock.Bottom); panel.Children.Add(reason); panel.Children.Add(results);
+        var outline = new Border { BorderThickness = new Thickness(1), Child = panel };
+        outline.SetResourceReference(Border.BorderBrushProperty, "Line");
+        Content = outline;
         query.TextChanged += (_, _) => RefreshResults(); results.SelectionChanged += (_, _) => ShowReason();
         results.MouseDoubleClick += (_, _) => ExecuteSelection();
         PreviewKeyDown += (_, e) => {
