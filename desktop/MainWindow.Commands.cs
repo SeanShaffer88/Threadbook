@@ -15,6 +15,7 @@ public sealed partial class MainWindow
         "Save reply" => "reply.save", "Command palette" => "commands.open", "History" => "archive.history", "Trash" => "archive.trash",
         "Search" => "search.focus", "Search filters" => "search.filters", "Theme: Dark / Light / System" => "appearance.theme-cycle",
         "Due / overdue" => "search.overdue", "Manage notebooks" => "notebooks.manage", "Library" => "library.manage", "Templates" => "templates.manage",
+        "Catalog" => "catalog.open",
         "Lock vault" => "vault.lock", "Auto-lock: Off" => "vault.autolock.off", "Auto-lock: 5 minutes" => "vault.autolock.5",
         "Auto-lock: 15 minutes" => "vault.autolock.15", "Auto-lock: 30 minutes" => "vault.autolock.30",
         _ => throw new ArgumentException("Command requires an explicit stable ID.", nameof(label))
