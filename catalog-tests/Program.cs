@@ -56,6 +56,18 @@ Test("fork text carries the facts, install and config, and a notes section", () 
     Check(!Catalog.ForkText(guide).Contains("## Install"), "guides have no install section");
 });
 
+Test("catalog expansion entries are present, dated, and findable", () =>
+{
+    foreach (var id in new[] { "guide-mcp-spec-docs", "guide-mcp-clients", "guide-mcp-python-sdk", "guide-mcp-typescript-sdk", "guide-mcp-rust-sdk", "guide-mcp-go-sdk", "guide-mcp-java-sdk", "dir-awesome-mcp-servers", "dir-mcp-so", "dir-glama", "dir-smithery", "dir-pulsemcp" })
+    {
+        var entry = Catalog.Entries.Single(e => e.Id == id);
+        Check(entry.VerifiedOn == "2026-11-11", id + " verified date");
+    }
+    Check(Catalog.Search("smithery", null).Any(e => e.Id == "dir-smithery"));
+    Check(Catalog.Search("rust sdk", null).Any(e => e.Id == "guide-mcp-rust-sdk"));
+    Check(Catalog.Entries.Where(e => e.Id.StartsWith("dir-")).All(e => e.Risks.Contains(CatalogRisk.Network)), "directories name the network risk");
+});
+
 Test("risk and kind labels are plain words", () =>
 {
     Check(Catalog.RiskLabel(CatalogRisk.ApiKey) == "Needs an API key or token");

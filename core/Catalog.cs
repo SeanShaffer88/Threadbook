@@ -23,6 +23,10 @@ public static class Catalog
         string license, string clients, CatalogRisk[] risks, bool pick, string? install, string? config) =>
         new(id, name, kind, summary, source, url, license, clients, risks, pick, install, config, "2026-11-10");
 
+    private static CatalogEntry Ev(string id, string name, CatalogKind kind, string summary, string source, string url,
+        string license, string clients, CatalogRisk[] risks, bool pick, string? install, string? config, string verifiedOn) =>
+        new(id, name, kind, summary, source, url, license, clients, risks, pick, install, config, verifiedOn);
+
     /// <summary>Every bundled entry, starter picks first within each kind.</summary>
     public static IReadOnlyList<CatalogEntry> Entries { get; } = Array.AsReadOnly(new[]
     {
@@ -178,6 +182,72 @@ public static class Catalog
             ".NET developers", new[] { CatalogRisk.Commands }, false,
             "dotnet add package ModelContextProtocol --prerelease",
             null),
+        Ev("guide-mcp-spec-docs", "Model Context Protocol — Spec and Docs", CatalogKind.Guide,
+            "The protocol itself: concepts (tools, resources, prompts), transports and security guidance, straight from the source. Read this first before judging any server or SDK.",
+            "Model Context Protocol", "https://modelcontextprotocol.io/", "See site",
+            "Any MCP client or server builder", Array.Empty<CatalogRisk>(), true,
+            null, null, "2026-11-11"),
+        Ev("guide-mcp-clients", "MCP Clients List (official)", CatalogKind.Guide,
+            "Which clients support which MCP features — tools, resources, prompts, sampling — so you can check before assuming your client supports a server.",
+            "Model Context Protocol", "https://modelcontextprotocol.io/clients", "See site",
+            "Any MCP user", Array.Empty<CatalogRisk>(), false,
+            null, null, "2026-11-11"),
+        Ev("guide-mcp-python-sdk", "MCP Python SDK", CatalogKind.Guide,
+            "The official Python SDK for building MCP servers and clients, in the FastMCP style. The quickest route to a first working server.",
+            "Model Context Protocol", "https://github.com/modelcontextprotocol/python-sdk", "MIT",
+            "Python developers", new[] { CatalogRisk.Commands }, false,
+            "pip install mcp",
+            null, "2026-11-11"),
+        Ev("guide-mcp-typescript-sdk", "MCP TypeScript SDK", CatalogKind.Guide,
+            "The official TypeScript SDK for building MCP servers and clients in Node or the browser ecosystem.",
+            "Model Context Protocol", "https://github.com/modelcontextprotocol/typescript-sdk", "See repository",
+            "TypeScript developers", new[] { CatalogRisk.Commands }, false,
+            "npm install @modelcontextprotocol/sdk",
+            null, "2026-11-11"),
+        Ev("guide-mcp-rust-sdk", "MCP Rust SDK (rmcp)", CatalogKind.Guide,
+            "The official Rust SDK (rmcp) for building MCP servers and clients with Rust's safety and small binaries.",
+            "Model Context Protocol", "https://github.com/modelcontextprotocol/rust-sdk", "See repository",
+            "Rust developers", new[] { CatalogRisk.Commands }, false,
+            "cargo add rmcp",
+            null, "2026-11-11"),
+        Ev("guide-mcp-go-sdk", "MCP Go SDK", CatalogKind.Guide,
+            "The official Go SDK for building MCP servers and clients, maintained with Google.",
+            "Model Context Protocol / Google", "https://github.com/modelcontextprotocol/go-sdk", "See repository",
+            "Go developers", new[] { CatalogRisk.Commands }, false,
+            "go get github.com/modelcontextprotocol/go-sdk",
+            null, "2026-11-11"),
+        Ev("guide-mcp-java-sdk", "MCP Java SDK", CatalogKind.Guide,
+            "The official Java SDK for building MCP servers and clients, built on Spring AI infrastructure.",
+            "Model Context Protocol", "https://github.com/modelcontextprotocol/java-sdk", "See repository",
+            "Java developers", new[] { CatalogRisk.Commands }, false,
+            null, null, "2026-11-11"),
+
+        // ---- Directories (discovery only: verify every listing at its own source) ----
+        Ev("dir-awesome-mcp-servers", "Awesome MCP Servers", CatalogKind.Guide,
+            "A large community-curated list of MCP servers by category. A discovery aid only — verify each server at its own source before installing anything.",
+            "punkpeye (community)", "https://github.com/punkpeye/awesome-mcp-servers", "See repository",
+            "Any MCP user", new[] { CatalogRisk.Network }, false,
+            null, null, "2026-11-11"),
+        Ev("dir-mcp-so", "MCP.so", CatalogKind.Guide,
+            "A community directory of MCP servers and clients, organized by category. Discovery only — verify each listing before use.",
+            "MCP.so", "https://mcp.so/", "See site",
+            "Any MCP user", new[] { CatalogRisk.Network }, false,
+            null, null, "2026-11-11"),
+        Ev("dir-glama", "Glama MCP Directory", CatalogKind.Guide,
+            "A searchable directory of MCP servers with per-server metadata. Discovery only — verify each listing before use.",
+            "Glama", "https://glama.ai/mcp/servers", "See site",
+            "Any MCP user", new[] { CatalogRisk.Network }, false,
+            null, null, "2026-11-11"),
+        Ev("dir-smithery", "Smithery", CatalogKind.Guide,
+            "A hosted registry for discovering and connecting MCP servers. Discovery only — a hosted connection means the service sits between you and the server, so read its terms before connecting an account.",
+            "Smithery", "https://smithery.ai/", "See site",
+            "Any MCP user", new[] { CatalogRisk.Network }, false,
+            null, null, "2026-11-11"),
+        Ev("dir-pulsemcp", "PulseMCP", CatalogKind.Guide,
+            "A directory of MCP servers plus a weekly newsletter tracking the ecosystem. Discovery only — verify each listing before use.",
+            "PulseMCP", "https://www.pulsemcp.com/", "See site",
+            "Any MCP user", new[] { CatalogRisk.Network }, false,
+            null, null, "2026-11-11"),
     });
 
     /// <summary>Plain label for a risk, shown in the entry detail.</summary>

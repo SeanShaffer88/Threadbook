@@ -6,6 +6,7 @@
 
 - Built-in catalog of MCP servers, skills, prompt packs and guides, opened from the sidebar or the Notebook menu. Each entry shows its source, license, compatible clients, a plain statement of what it can touch (files, commands, network, API key), and a last-verified date. Install commands and config snippets can be copied, and an entry can be saved into a notebook as a note with its facts and room for personal notes. The catalog is bundled and read-only; Threadbook downloads and installs nothing from it.
 - Visible borders: the sidebar, note list, reading pane and layout view are now framed panels with a clear edge and a small gap between them, note cards in the list carry a full border, and each Kanban lane is a bordered column, so the window's regions read at a glance in both themes.
+- The catalog grew: the official MCP spec and docs, the official clients list, and the official Python, TypeScript, Rust, Go and Java SDKs join the C# SDK, plus five discovery directories (Awesome MCP Servers, MCP.so, Glama, Smithery and PulseMCP) — each labelled discovery-only, with a reminder to verify every listing at its own source.
 
 ## [0.3.0-beta.1] - 2026-11-10
 
