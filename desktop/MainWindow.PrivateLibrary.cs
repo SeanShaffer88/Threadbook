@@ -156,7 +156,10 @@ public sealed partial class MainWindow
         var dialog = new Window { Owner = this, Title = "Attachments · saved note", Width = 720, Height = 620, WindowStartupLocation = WindowStartupLocation.CenterOwner, Background = Brushes.White, Foreground = Brushes.Black };
         ApplicationBrand.Apply(dialog);
         WindowSizing.Attach(dialog, 600, 480);
-        var panel = new DockPanel { Margin = new Thickness(18) }; dialog.Content = panel;
+        var panel = new DockPanel { Margin = new Thickness(18) };
+        var outline = new Border { BorderThickness = new Thickness(1), Child = panel };
+        outline.SetResourceReference(Border.BorderBrushProperty, "Line");
+        dialog.Content = outline;
         var controls = new WrapPanel(); DockPanel.SetDock(controls, Dock.Top); panel.Children.Add(controls);
         var message = new TextBlock { Text = "PNG/JPEG can be previewed. Other files stay opaque; no attachment is executed.", TextWrapping = TextWrapping.Wrap }; DockPanel.SetDock(message, Dock.Bottom); panel.Children.Add(message);
         var list = new ListBox { DisplayMemberPath = "DisplayName", MaxHeight = 190 }; DockPanel.SetDock(list, Dock.Top); panel.Children.Add(list);

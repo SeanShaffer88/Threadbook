@@ -50,6 +50,10 @@ internal sealed class WindowFrame : Grid
         controls.Children.Add(minimize); controls.Children.Add(maximize); controls.Children.Add(CaptionButton("Close", "×", owner.Close));
         Grid.SetColumn(controls, 2); bar.Children.Add(controls); surface.Child = bar; Children.Add(surface);
         Grid.SetRow(body, 1); Children.Add(body);
+        // Every window carries a visible edge so it reads against dark backgrounds.
+        var outline = new Border { BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(5), IsHitTestVisible = false };
+        outline.SetResourceReference(Border.BorderBrushProperty, "Line");
+        Grid.SetRowSpan(outline, 2); Children.Add(outline);
         owner.StateChanged += StateChanged; owner.Closed += Closed;
         owner.Loaded += OwnerLoaded;
         UpdateButtons();
