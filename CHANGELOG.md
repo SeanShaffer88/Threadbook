@@ -10,6 +10,10 @@
 - Visible borders: the sidebar, note list, reading pane and layout view are now framed panels with a clear edge and a small gap between them, note cards in the list carry a full border, and each Kanban lane is a bordered column, so the window's regions read at a glance in both themes.
 - The catalog grew: the official MCP spec and docs, the official clients list, and the official Python, TypeScript, Rust, Go and Java SDKs join the C# SDK, plus five discovery directories (Awesome MCP Servers, MCP.so, Glama, Smithery and PulseMCP) — each labelled discovery-only, with a reminder to verify every listing at its own source.
 
+### Fixed
+
+- The Catalog menu command had no stable command ID, which stopped the app from starting; it now registers as `catalog.open`, and the packaged smoke check runs in CI as well as in the release build so this class of failure is caught before a release.
+
 ## [0.3.0-beta.1] - 2026-11-10
 
 ### Added

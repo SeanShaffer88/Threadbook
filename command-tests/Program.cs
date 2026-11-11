@@ -41,6 +41,7 @@ static class Program
             var main=new MainWindow(service,store,store.Files.RootDirectory,false);main.Show();Pump();
             var reply=(TextBox)Field(main,"replyBox")!; var search=(TextBox)Field(main,"search")!;
             var commands=(Dictionary<string,Action>)Field(main,"uiCommands")!;
+            Check(commands.ContainsKey("Catalog"),"catalog command registered with a stable ID");
             service.Execute(new ToggleSaved(target));
             var library=(LibraryService)Field(main,"library")!;
             library.Execute(new PutLibraryTag(null,"selection"));var tag=library.State.Tags.Last().Id;

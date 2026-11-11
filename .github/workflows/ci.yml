@@ -73,4 +73,4 @@ jobs:
           $packageRoot = Join-Path $env:THREADBOOK_CI_ROOT 'packages'
           & (Join-Path $env:GITHUB_WORKSPACE 'tools/Build-Packages.ps1') -OutputRoot $packageRoot -SkipInstaller
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          & (Join-Path $env:GITHUB_WORKSPACE 'tools/Test-Packages.ps1') -PackageRoot $packageRoot -FixtureRoot (Join-Path $env:THREADBOOK_CI_ROOT 'package-fixtures')
+          & (Join-Path $env:GITHUB_WORKSPACE 'tools/Test-Packages.ps1') -PackageRoot $packageRoot -FixtureRoot (Join-Path $env:THREADBOOK_CI_ROOT 'package-fixtures') -RunSmoke
