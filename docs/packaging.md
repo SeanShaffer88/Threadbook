@@ -7,7 +7,7 @@ Releases provide a per-user installer and a portable ZIP. Both require the **.NE
 Use PowerShell 7, .NET SDK 10.0.403 and a trusted installed Inno Setup compiler. The script accepts Inno 6/7 command-line `/D` and `/O` options. The local qualification used Inno 7.1.1 after the sandbox denied access to the installed Inno 6 executable. Compiler provenance, path and SHA-256 are private build evidence; no compiler is downloaded or installed by these scripts or CI. Official compiler/directive help: <https://jrsoftware.org/ishelp/>.
 
 ```powershell
-pwsh -NoProfile -File tools/Build-Packages.ps1 -Version 0.3.0-beta.1 -IsccPath '<installed-ISCC.exe>' -OutputRoot '<new-absolute-directory-outside-repository>'
+pwsh -NoProfile -File tools/Build-Packages.ps1 -Version 0.4.0-beta.1 -IsccPath '<installed-ISCC.exe>' -OutputRoot '<new-absolute-directory-outside-repository>'
 pwsh -NoProfile -File tools/Test-Packages.ps1 -PackageRoot '<package-directory>' -FixtureRoot '<new-absolute-fixture-directory>' -RunSmoke
 ```
 
