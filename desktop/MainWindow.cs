@@ -71,7 +71,7 @@ public sealed partial class MainWindow : Window
         AutomationProperties.SetName(replyBox, "Reply body");
         var replyActions = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 8, 0, 0) }; composerSaveButton = Btn("Save reply", () => uiCommands["Save reply"](), true); replyActions.Children.Add(composerSaveButton); replyActions.Children.Add(Btn("Cancel", ClearReply)); composer.Children.Add(replyActions);
         DockPanel.SetDock(composer, Dock.Bottom); right.Children.Add(composer); DockPanel.SetDock(inlineHeader, Dock.Top); right.Children.Add(inlineHeader); DockPanel.SetDock(inlineHost, Dock.Top); right.Children.Add(inlineHost); right.Children.Add(new ScrollViewer { Content = detail, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled });
-        detailPanel = PanelBorder(reader); detailPanel.BorderThickness = new Thickness(0); Grid.SetColumn(detailPanel, 2); columns.Children.Add(detailPanel);
+        detailPanel = PanelBorder(reader, false); Grid.SetColumn(detailPanel, 2); columns.Children.Add(detailPanel);
         void FitInlineEditor() {
             if (inlineHost.Children.OfType<ScrollViewer>().FirstOrDefault() is { } editorScroll)
                 editorScroll.MaxHeight = Math.Max(70, Math.Min(250, right.ActualHeight - composer.ActualHeight - inlineHeader.ActualHeight - 100));
@@ -118,7 +118,7 @@ public sealed partial class MainWindow : Window
         var b = Btn(text, click); b.HorizontalContentAlignment = HorizontalAlignment.Left; b.Background = Brushes.Transparent; b.Margin = new Thickness(0, 1, 0, 1); b.BorderThickness = new Thickness(0); b.Padding = new Thickness(8, 5, 8, 5); return b;
     }
     private static Border Rule() { var b = new Border { Height = 1, Margin = new Thickness(0, 17, 0, 17) }; b.SetResourceReference(Border.BackgroundProperty, "Line"); return b; }
-    private static Border PanelBorder(UIElement child) { var b = new Border { Child = child, BorderThickness = new Thickness(0, 0, 1, 0) }; b.SetResourceReference(Border.BorderBrushProperty, "Line"); return b; }
+    private static Border PanelBorder(UIElement child, bool gapAfter = true) { var b = new Border { Child = child, BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(3), Margin = gapAfter ? new Thickness(0, 0, 6, 0) : new Thickness(0) }; b.SetResourceReference(Border.BorderBrushProperty, "Line"); return b; }
     private void SetStatus(string message, bool error = false) { status.Text = message; status.ToolTip = message; status.SetResourceReference(TextBlock.ForegroundProperty, error ? "Text" : "Muted"); }
     private bool Run(Command c)
     {
@@ -159,7 +159,7 @@ public sealed partial class MainWindow : Window
             content.Children.Add(Label(note.Title, 18, true));
             var excerpt = Label(LibraryExcerpt(note, 180), 14); excerpt.MaxHeight = 44; content.Children.Add(excerpt);
             content.Children.Add(Label($"{replyCounts.GetValueOrDefault(note.Id)} replies" + (note.Saved ? "     ★ Saved" : ""), 12, false, note.Saved ? "Accent" : "Muted"));
-            var card = Btn(note.Title, () => SelectNote(note.Id)); card.Content = content; card.HorizontalContentAlignment = HorizontalAlignment.Stretch; card.Padding = new Thickness(0); card.Margin = new Thickness(0); card.BorderThickness = new Thickness(selectedId == note.Id ? 3 : 0, 0, 0, 1);
+            var card = Btn(note.Title, () => SelectNote(note.Id)); card.Content = content; card.HorizontalContentAlignment = HorizontalAlignment.Stretch; card.Padding = new Thickness(0); card.Margin = new Thickness(0, 0, 0, 6); card.BorderThickness = selectedId == note.Id ? new Thickness(3, 1, 1, 1) : new Thickness(1);
             card.Background = Brushes.Transparent;
             if (selectedId == note.Id) { card.SetResourceReference(Control.BorderBrushProperty, "Accent"); card.SetResourceReference(Control.BackgroundProperty, "Selected"); } feed.Children.Add(card);
         }
