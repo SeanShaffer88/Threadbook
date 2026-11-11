@@ -68,6 +68,19 @@ Test("catalog expansion entries are present, dated, and findable", () =>
     Check(Catalog.Entries.Where(e => e.Id.StartsWith("dir-")).All(e => e.Risks.Contains(CatalogRisk.Network)), "directories name the network risk");
 });
 
+Test("catalog pass 2 entries are present, dated, and findable", () =>
+{
+    foreach (var id in new[] { "mcp-notion", "mcp-redis", "mcp-mongodb", "mcp-supabase", "mcp-terraform", "mcp-grafana", "mcp-huggingface", "mcp-docker", "mcp-kubernetes", "mcp-blender", "mcp-obsidian", "mcp-jetbrains", "mcp-gitlab", "mcp-microsoft", "mcp-mslearn", "skill-openai-skills", "skill-vercel-agent-skills", "pack-claude-cookbooks", "guide-openai-cookbook", "guide-mcp-inspector" })
+    {
+        var entry = Catalog.Entries.Single(e => e.Id == id);
+        Check(entry.VerifiedOn == "2026-11-11", id + " verified date");
+    }
+    Check(Catalog.Entries.Count == 58, "catalog stands at 58 entries");
+    Check(Catalog.Search("notion", null).Any(e => e.Id == "mcp-notion"));
+    Check(Catalog.Search("kubernetes", null).Any(e => e.Id == "mcp-kubernetes"));
+    Check(Catalog.Search("inspector", null).Any(e => e.Id == "guide-mcp-inspector"));
+});
+
 Test("risk and kind labels are plain words", () =>
 {
     Check(Catalog.RiskLabel(CatalogRisk.ApiKey) == "Needs an API key or token");

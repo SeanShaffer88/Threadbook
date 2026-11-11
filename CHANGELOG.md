@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Catalog pass 2: twenty more verified entries — the official Notion, Redis, MongoDB, Supabase, Terraform, Grafana, Hugging Face, Docker, JetBrains, Microsoft and Microsoft Learn MCP servers, the Kubernetes community server, Blender and Obsidian community servers, a community GitLab server, OpenAI's and Vercel's skill catalogs, the Claude and OpenAI cookbooks, and the official MCP Inspector. The catalog now stands at 58 entries.
+
 ### Fixed
 
 - Every window now carries a visible border: the shared window frame draws a 1-pixel edge in the theme's line colour, and the command palette, wiki-link chooser and attachments windows — which use plain window frames — wrap their content in the same edge, so no window blends into a dark background.
